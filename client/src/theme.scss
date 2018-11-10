@@ -1,0 +1,26 @@
+/*
+https://material.io/tools/color/#!/?view.left=0&view.right=1&primary.color=757575&secondary.color=007bff
+ */
+
+$primary: #757575;
+$primaryLight: #a4a4a4;
+$primaryDark: #494949;
+$secondary: #007bff;
+$secondaryLight: #69a9ff;
+$secondaryDark: #0050cb;
+$light: #f5f5f6;
+$dark: #000;
+
+$textColorForBg: (
+  primary: $light,
+  primaryLight: $dark,
+  primaryDark: $light,
+  secondary: $light,
+  secondaryLight: $light,
+  secondaryDark: $light,
+  dark: $light,
+  light: $dark
+);
+
+$navBarHeight: 54px;
+$navBarHeightSm: 62px;

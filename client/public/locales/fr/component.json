@@ -1,0 +1,16 @@
+{
+  "MainHeader": {
+    "Languages": {
+      "languagesDropdown": {
+        "labelledBy": "Choisir une langue"
+      }
+    }
+  },
+  "Drawer": {
+    "separators": {
+      "authentication": "Authentification",
+      "navigation": "Navigation",
+      "settings": "Paramètres"
+    }
+  }
+}

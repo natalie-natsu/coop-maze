@@ -1,0 +1,9 @@
+@import '../../../theme.scss';
+
+.drawer-separator {
+  background: darken($secondary, 2%);
+  color: map_get($textColorForBg, secondary);
+  text-transform: uppercase;
+  font-size: 0.6em;
+  line-height: 3em;
+}

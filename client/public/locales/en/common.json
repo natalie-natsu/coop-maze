@@ -1,0 +1,25 @@
+{
+  "test": "Yeah, the test works !",
+  "undefined": "Undefined",
+  "splashLoading": "Project is loading...",
+  "project": {
+    "title": "Project Title",
+    "name": "Name",
+    "shortName": "ShortName"
+  },
+  "language": {
+    "en": "English",
+    "es": "Español",
+    "de": "Deutsch",
+    "fr": "Français"
+  },
+  "accessibility": {
+    "aria-label": {
+      "close": "Close",
+      "toggleNav": "Toggle navigation"
+    },
+    "sr-only": {
+      "current": "current"
+    }
+  }
+}

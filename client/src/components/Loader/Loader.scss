@@ -1,0 +1,13 @@
+@import '../../theme.scss';
+
+.loader {
+  position: relative;
+  padding: 1rem 0;
+  width: 100%;
+  text-align: center;
+  color: $primary;
+}
+
+.loader svg {
+  font-size: 40px;
+}

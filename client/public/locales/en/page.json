@@ -1,0 +1,19 @@
+{
+  "NoMatch": {
+    "card": {
+      "title": "Not found.",
+      "text": "We couldn't fin the page you were searching for.",
+      "button": "Go home"
+    }
+  },
+  "NotAllowed": {
+    "card": {
+      "title": "You shall not pass !",
+      "text": "Are you sure to be granted for accessing that kind of page ?",
+      "button": "Go home"
+    }
+  },
+  "Home": {
+
+  }
+}

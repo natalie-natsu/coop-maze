@@ -1,0 +1,9 @@
+{
+  "home": {
+    "name": "Accueil",
+    "description": "Description de la page d'accueil"
+  },
+  "notAllowed": {
+    "name": "401"
+  }
+}

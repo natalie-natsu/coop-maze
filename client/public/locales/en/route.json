@@ -1,0 +1,9 @@
+{
+  "home": {
+    "name": "Home",
+    "description": "Description for the home page"
+  },
+  "notAllowed": {
+    "name": "401"
+  }
+}
