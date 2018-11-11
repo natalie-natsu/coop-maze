@@ -18,6 +18,7 @@ import { localeTo } from '../../helpers/locales';
 import './App.css';
 
 import Layout from '../Layout';
+import Socket from '../Socket';
 
 import NotAllowed from '../../pages/NotAllowed';
 import NoMatch from '../../pages/NoMatch';
@@ -39,6 +40,7 @@ class App extends React.Component {
   render() {
     return (
       <div id="app">
+        <Socket />
         <ToastContainer />
         <BrowserRouter>
           <Layout>
