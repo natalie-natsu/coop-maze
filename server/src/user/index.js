@@ -29,6 +29,10 @@ export class User {
   }
 
   setName(name) {
+    if (name === this.name) {
+      return;
+    }
+
     this.name = name;
 
     if (this.game) {
@@ -37,46 +41,45 @@ export class User {
   }
 
   newGame() {
-    const game = new Game(this);
-    server.games.set(game.id, game);
-    game.broadcast();
+    this.leaveGame();
+    this.game = new Game(this);
+    server.games.set(this.game.id, this.game);
+    this.game.broadcast();
+    return this.game.id;
   }
 
   joinGame(gameId) {
+    this.leaveGame();
+
     if (server.games.has(gameId)) {
-      const game = server.games.get(gameId);
-      game.join(this);
-      game.broadcast();
+      this.game = server.games.get(gameId);
+      this.game.join(this);
+      this.game.broadcast();
     }
   }
 
-  leaveGame(gameId) {
-    if (!server.games.has(gameId)) {
+  leaveGame() {
+    if (!this.game || !this.game.users.has(this.id)) {
       return;
     }
 
-    const game = server.games.get(gameId);
-
-    if (game.sockets.has(this.socket.id)) {
-      game.leave(this);
-      game.broadcast();
+    if (this.game.users.size - 1) {
+      this.game.leave(this);
+      this.game.broadcast();
+    } else {
+      const gameId = this.game.id;
+      this.game.leave(this);
+      server.games.delete(gameId);
     }
+
+    this.game = null;
   }
 
   onDisconnect() {
     server.users.delete(this.id);
 
-    if (!this.game) {
-      return;
-    }
-
-    const game = this.game;
-    game.leave(this);
-
-    if (game.sockets.size) {
-      game.broadcast();
-    } else {
-      server.games.delete(game.id);
+    if (this.game) {
+      this.leaveGame();
     }
   }
 }

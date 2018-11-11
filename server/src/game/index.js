@@ -21,13 +21,11 @@ export class Game {
 
     this.users.set(user.id, user);
     user.socket.join(this.id);
-    user.game = this;
   }
 
   leave(user) {
     this.users.delete(user.id);
     user.socket.leave(this.id);
-    user.game = null;
   }
 
   broadcast() {
