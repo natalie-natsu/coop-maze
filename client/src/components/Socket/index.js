@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import faCircle from '@fortawesome/fontawesome-free-solid/faCircle';
 
 import io from 'socket.io-client';
-import { setSocketId } from '../../actions/socket';
+import { socketAfterConnect } from '../../actions/socket';
 import './Socket.css';
 
 const socket = io('http://localhost:3001', {
@@ -17,14 +17,9 @@ class Socket extends React.Component {
   componentDidMount() {
     socket.connect();
     socket.on('connect', () => {
-      this.props.dispatch(setSocketId(socket.id));
+      this.props.dispatch(socketAfterConnect(socket));
       // eslint-disable-next-line no-console
       console.log(`Connected to socket: ${socket.id}`);
-    });
-    socket.on('disconnect', () => {
-      socket.connect();
-      // eslint-disable-next-line no-console
-      console.log('Disconnected from socket: trying to reconnect');
     });
   }
 
@@ -33,10 +28,10 @@ class Socket extends React.Component {
   }
 
   render() {
-    const { socketId } = this.props;
-    return socketId && (
+    const { ws } = this.props;
+    return ws && (
       <div id="socketStatus" className="text-muted">
-        <FontAwesomeIcon icon={faCircle} /> Connected to socket :<br />{ socketId }
+        <FontAwesomeIcon icon={faCircle} /> Connected to socket :<br />{ ws.id }
       </div>
     );
   }
@@ -45,14 +40,10 @@ class Socket extends React.Component {
 
 Socket.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  socketId: PropTypes.string,
-};
-
-Socket.defaultProps = {
-  socketId: null,
+  ws: PropTypes.shape({ id: PropTypes.string }).isRequired,
 };
 
 export default connect(
-  state => ({ socketId: state.global.socketId }),
+  state => ({ ws: state.socket }),
   dispatch => ({ dispatch }),
 )(Socket);

@@ -8,6 +8,7 @@ import global from './global';
 import entities from './entities';
 import form from './form';
 import pages from './pages';
+import socket from './socket';
 
 const appReducer = combineReducers({
   burgerMenu,
@@ -15,6 +16,7 @@ const appReducer = combineReducers({
   form,
   global,
   pages,
+  socket,
 });
 
 const rootReducer = (state, action) => {
