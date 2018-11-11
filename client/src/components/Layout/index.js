@@ -39,7 +39,7 @@ class Layout extends React.Component {
         <Drawer />
         <MainHeader onMount={() => this.setState({ contentCanBeLoaded: true })} />
         <main id="page" className="content-wrapper">
-          {this.state.contentCanBeLoaded ? children : Loader}
+          {this.state.contentCanBeLoaded ? children : <Loader />}
         </main>
       </div>
     );
