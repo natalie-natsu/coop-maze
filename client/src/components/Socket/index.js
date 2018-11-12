@@ -18,8 +18,6 @@ class Socket extends React.Component {
     socket.connect();
     socket.on('connect', () => {
       this.props.dispatch(socketAfterConnect(socket));
-      // eslint-disable-next-line no-console
-      console.log(`Connected to socket: ${socket.id}`);
     });
   }
 
@@ -28,10 +26,9 @@ class Socket extends React.Component {
   }
 
   render() {
-    const { ws } = this.props;
-    return ws && (
+    return this.props.socket && (
       <div id="socketStatus" className="text-muted">
-        <FontAwesomeIcon icon={faCircle} /> Connected to socket :<br />{ ws.id }
+        <FontAwesomeIcon icon={faCircle} /> Connected to socket :<br />{ this.props.socket.id }
       </div>
     );
   }
@@ -40,10 +37,10 @@ class Socket extends React.Component {
 
 Socket.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  ws: PropTypes.shape({ id: PropTypes.string }).isRequired,
+  socket: PropTypes.shape({ id: PropTypes.string }).isRequired,
 };
 
 export default connect(
-  state => ({ ws: state.socket }),
+  state => ({ socket: state.socket }),
   dispatch => ({ dispatch }),
 )(Socket);

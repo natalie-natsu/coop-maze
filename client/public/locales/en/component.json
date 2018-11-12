@@ -12,5 +12,13 @@
       "navigation": "Navigation",
       "settings": "Settings"
     }
+  },
+  "Game": {
+    "Create": {
+      "button": {
+        "start": "Start the game",
+        "continue": "Continue in the dungeon"
+      }
+    }
   }
 }

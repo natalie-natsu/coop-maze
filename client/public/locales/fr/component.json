@@ -12,5 +12,13 @@
       "navigation": "Navigation",
       "settings": "Paramètres"
     }
+  },
+  "Game": {
+    "Create": {
+      "button": {
+        "start": "Commencer la partie",
+        "continue": "Continuer dans le donjon"
+      }
+    }
   }
 }
