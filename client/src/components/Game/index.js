@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { translate } from 'react-i18next';
 
 import { updateGame } from '../../actions/game';
+import render from './render';
 import './Game.css';
 
 class Game extends React.Component {
@@ -22,6 +23,8 @@ class Game extends React.Component {
         this.subscribeToGame();
       }
     }
+
+    render();
   }
 
   subscribeToGame() {
@@ -47,6 +50,7 @@ class Game extends React.Component {
     return (
       <div id="game">
         <div className="container">
+          <div id="phaser-container" />
           Game {match.params.id}
         </div>
       </div>
