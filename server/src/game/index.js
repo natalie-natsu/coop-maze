@@ -29,9 +29,12 @@ export class Game {
   }
 
   broadcast() {
-    server.io.to(this.id).emit(Events.UPDATE_GAME, {
+    const state = {
       id: this.id,
       users: Array.from(this.users.values()).map(user => user.name)
-    });
+    };
+
+    server.io.to(this.id).emit(Events.UPDATE_GAME, state);
+    return state;
   }
 }

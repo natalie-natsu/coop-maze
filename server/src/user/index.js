@@ -44,8 +44,7 @@ export class User {
     this.leaveGame();
     this.game = new Game(this);
     server.games.set(this.game.id, this.game);
-    this.game.broadcast();
-    callback(this.game.id);
+    callback(this.game.broadcast());
   }
 
   joinGame(gameId) {
