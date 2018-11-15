@@ -40,12 +40,12 @@ export class User {
     }
   }
 
-  newGame() {
+  newGame(callback) {
     this.leaveGame();
     this.game = new Game(this);
     server.games.set(this.game.id, this.game);
     this.game.broadcast();
-    return this.game.id;
+    callback(this.game.id);
   }
 
   joinGame(gameId) {
