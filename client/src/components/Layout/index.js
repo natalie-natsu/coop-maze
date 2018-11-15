@@ -50,7 +50,7 @@ Layout.propTypes = {
   i18n: PropTypes.shape({ language: PropTypes.string }).isRequired,
   location: PropTypes.shape({ pathname: PropTypes.string }).isRequired,
   t: PropTypes.func.isRequired,
-  children: PropTypes.element.isRequired,
+  children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]).isRequired,
 };
 
 export default withRouter(translate(['common', 'route'])(Layout));
