@@ -3,11 +3,13 @@ import { t } from 'i18next';
 import { matchPath } from 'react-router-dom';
 
 export const routes = {
+  game: '/game/:id',
   home: '/',
   notAllowed: '/notAllowed',
 };
 
 export const routeKeys = {
+  [routes.game]: 'game',
   [routes.home]: 'home',
   [routes.notAllowed]: 'notAllowed',
 };

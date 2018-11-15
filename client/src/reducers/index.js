@@ -7,6 +7,7 @@ import { RESET_APP } from '../actions/app';
 import global from './global';
 import entities from './entities';
 import form from './form';
+import game from './game';
 import pages from './pages';
 import socket from './socket';
 
@@ -14,6 +15,7 @@ const appReducer = combineReducers({
   burgerMenu,
   entities,
   form,
+  game,
   global,
   pages,
   socket,

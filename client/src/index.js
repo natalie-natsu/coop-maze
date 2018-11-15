@@ -17,6 +17,7 @@ import errorMiddleware from './middlewares/errorMiddleware';
 import reducers from './reducers';
 import App from './components/App';
 import SplashScreen from './components/SplashScreen';
+import Socket from './components/Socket';
 import i18n from './i18n';
 
 const middleWares = [thunk, errorMiddleware];
@@ -59,7 +60,10 @@ class Root extends React.Component {
       <Provider store={store}>
         <PersistGate loading={<SplashScreen />} persistor={persistor}>
           <I18nextProvider i18n={i18n}>
-            {this.state.splash ? <SplashScreen /> : <App />}
+            <div>
+              <Socket />
+              {this.state.splash ? <SplashScreen /> : <App gameId={store.getState().global.gameId} />}
+            </div>
           </I18nextProvider>
         </PersistGate>
       </Provider>

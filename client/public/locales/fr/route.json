@@ -1,4 +1,8 @@
 {
+  "game": {
+    "name": "Partie en cours",
+    "description": "Des joueurs ont commencé une session de jeu."
+  },
   "home": {
     "name": "Accueil",
     "description": "Description de la page d'accueil"

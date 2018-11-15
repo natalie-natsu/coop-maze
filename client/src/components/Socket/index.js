@@ -19,6 +19,10 @@ class Socket extends React.Component {
     socket.on('connect', () => {
       this.props.dispatch(socketAfterConnect(socket));
     });
+    socket.on('UPDATE_USER', (user) => {
+      // eslint-disable-next-line no-console
+      console.log(`User is called ${user}`);
+    });
   }
 
   componentWillUnmount() {
@@ -28,7 +32,7 @@ class Socket extends React.Component {
   render() {
     return this.props.socket && (
       <div id="socketStatus" className="text-muted">
-        <FontAwesomeIcon icon={faCircle} /> Connected to socket :<br />{ this.props.socket.id }
+        <FontAwesomeIcon icon={faCircle} /> socket { this.props.socket.id }
       </div>
     );
   }
