@@ -1,6 +1,9 @@
 import Phaser from 'phaser';
 
-export default function () {
+const TILE_SIZE = 16;
+const WALL = '#';
+
+export default function (map) {
   new Phaser.Game({
     type: Phaser.AUTO,
     parent: 'phaser-container',
@@ -13,19 +16,16 @@ export default function () {
   });
 
   function preload() {
-    this.load.image('bob', '/assets/images/bob.png');
+    this.load.image('wall', '/assets/images/wall.png');
   }
 
   function create() {
-    const logo = this.add.image(400, 150, 'bob');
-
-    this.tweens.add({
-      targets: logo,
-      y: 450,
-      duration: 2000,
-      ease: 'Power2',
-      yoyo: true,
-      loop: -1,
+    map.forEach((row, y) => {
+      row.split('').forEach((tile, x) => {
+        if (map[y][x] === WALL) {
+          this.add.image(x * TILE_SIZE, y * TILE_SIZE, 'wall');
+        }
+      });
     });
   }
 }
