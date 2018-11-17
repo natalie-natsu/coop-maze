@@ -1,13 +1,25 @@
 import uuidv4 from "uuid/v4";
+import { exec } from "child_process";
 
 import { server } from '../';
+import { env } from '../env';
 import { Events } from "../events";
 
 export class Game {
-  constructor(user) {
+  constructor(user, callback) {
     this.id = uuidv4();
     this.users = new Map();
-    this.join(user);
+
+    exec(`${env.PYTHON_CMD} ${process.cwd()}/../maze-generator`, (err, stdout) => {
+      if (err) {
+        console.error(err);
+      } else {
+        this.map = stdout.trim().split('\n');
+      }
+
+      this.join(user);
+      callback();
+    });
   }
 
   join(user) {
@@ -31,7 +43,8 @@ export class Game {
   broadcast() {
     const state = {
       id: this.id,
-      users: Array.from(this.users.values()).map(user => user.name)
+      users: Array.from(this.users.values()).map(user => user.name),
+      map: this.map
     };
 
     server.io.to(this.id).emit(Events.UPDATE_GAME, state);

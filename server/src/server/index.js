@@ -3,6 +3,7 @@ import socket from "socket.io";
 import { Server as http } from "http";
 
 import { User } from "../user";
+import { env } from "../env";
 
 export class Server {
   constructor() {
@@ -13,8 +14,8 @@ export class Server {
     this.users = new Map();
     this.games = new Map();
 
-    // TODO set port in ENV
-    server.listen(3001);
+    server.listen(env.WS_PORT);
+    console.log(`Server listening on port ${env.WS_PORT}.`);
   }
 
   init() {

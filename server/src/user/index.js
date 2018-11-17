@@ -42,9 +42,10 @@ export class User {
 
   newGame(callback) {
     this.leaveGame();
-    this.game = new Game(this);
-    server.games.set(this.game.id, this.game);
-    callback(this.game.broadcast());
+    this.game = new Game(this, () => {
+      server.games.set(this.game.id, this.game);
+      callback(this.game.broadcast());
+    });
   }
 
   joinGame(gameId) {
