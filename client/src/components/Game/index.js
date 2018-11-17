@@ -4,13 +4,13 @@ import { connect } from 'react-redux';
 import { translate } from 'react-i18next';
 
 import { updateGame } from '../../actions/game';
-import render from './render';
+import startEngine from '../../engine';
 import './Game.css';
 
 class Game extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { isJoining: false, mapRendered: false };
+    this.state = { isJoining: false, engineStarted: false };
   }
 
   componentDidMount() {
@@ -24,7 +24,7 @@ class Game extends React.Component {
       }
     }
 
-    this.renderMap();
+    this.startEngine();
   }
 
   componentWillUnmount() {
@@ -46,17 +46,17 @@ class Game extends React.Component {
       const { dispatch, socket, match } = this.props;
       socket.emit('JOIN_GAME', match.params.id, (game) => {
         dispatch(updateGame(game));
-        this.renderMap(game.map);
+        this.startEngine(game.map);
         this.setState({ isJoining: false });
         this.subscribeToGame();
       });
     }
   }
 
-  renderMap(map = this.props.game.map) {
-    if (!this.state.mapRendered && map) {
-      this.setState({ mapRendered: true });
-      render(map);
+  startEngine(map = this.props.game.map) {
+    if (!this.state.engineStarted && map) {
+      this.setState({ engineStarted: true });
+      startEngine(map);
     }
   }
 
