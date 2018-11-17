@@ -6,9 +6,12 @@ import { env } from "../env";
 import { Events } from "../events";
 
 export class Game {
+  static DELETE_TIMEOUT = 10; // seconds
+
   constructor(user, callback) {
     this.id = uuidv4();
     this.users = new Map();
+    this.deleteTimeoutId = null;
 
     const cmdPath = `${process.cwd()}/maze-generator`;
     const cmdOptions = `${env.MAP_WIDTH} ${env.MAP_HEIGHT}`;
@@ -30,9 +33,19 @@ export class Game {
     });
   }
 
+  log(message) {
+    console.log(`Game ${this.id} ${message}.`);
+  }
+
   join(user) {
     if (this.users.has(user.id)) {
       return;
+    }
+
+    if (this.deleteTimeoutId) {
+      clearTimeout(this.deleteTimeoutId);
+      this.deleteTimeoutId = null;
+      this.log('will not be deleted');
     }
 
     if (user.game) {
@@ -57,5 +70,19 @@ export class Game {
 
     server.io.to(this.id).emit(Events.UPDATE_GAME, state);
     return state;
+  }
+
+  delete() {
+    if (this.deleteTimeoutId) {
+      return;
+    }
+
+    this.deleteTimeoutId = setTimeout(() => {
+      server.games.delete(this.id);
+      this.deleteTimeoutId = null;
+      this.log('deleted');
+    }, Game.DELETE_TIMEOUT * 1000);
+
+    this.log(`will be deleted in ${Game.DELETE_TIMEOUT} seconds`);
   }
 }

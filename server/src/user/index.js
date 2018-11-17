@@ -11,6 +11,8 @@ export class User {
     this.game = null;
     this.name = faker.name.firstName();
 
+    this.log('connected');
+
     this.listners = new Map([
       [Events.SET_USER_NAME, this.setName],
       [Events.NEW_GAME, this.newGame],
@@ -18,6 +20,10 @@ export class User {
       [Events.LEAVE_GAME, this.leaveGame],
       ["disconnect", this.onDisconnect]
     ]);
+  }
+
+  log(message) {
+    console.log(`User ${this.id} (${this.name}) ${message}.`);
   }
 
   init() {
@@ -33,6 +39,8 @@ export class User {
       return;
     }
 
+    this.log(`renamed to ${name}`);
+
     this.name = name;
 
     if (this.game) {
@@ -46,15 +54,19 @@ export class User {
       server.games.set(this.game.id, this.game);
       callback(this.game.broadcast());
     });
+
+    this.log(`created game ${this.game.id}`);
   }
 
-  joinGame(gameId) {
+  joinGame(gameId, callback) {
     this.leaveGame();
 
     if (server.games.has(gameId)) {
       this.game = server.games.get(gameId);
       this.game.join(this);
-      this.game.broadcast();
+      callback(this.game.broadcast());
+
+      this.log(`joined game ${this.game.id}`);
     }
   }
 
@@ -63,13 +75,14 @@ export class User {
       return;
     }
 
+    this.log(`leaved game ${this.game.id}`);
+
     if (this.game.users.size - 1) {
       this.game.leave(this);
       this.game.broadcast();
     } else {
-      const gameId = this.game.id;
+      this.game.delete();
       this.game.leave(this);
-      server.games.delete(gameId);
     }
 
     this.game = null;
@@ -81,5 +94,7 @@ export class User {
     if (this.game) {
       this.leaveGame();
     }
+
+    this.log('disconnected');
   }
 }
