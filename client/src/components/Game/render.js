@@ -4,6 +4,7 @@ const TILE_SIZE = 16;
 const WALL = '#';
 
 export default function (map) {
+  // eslint-disable-next-line no-new
   new Phaser.Game({
     type: Phaser.AUTO,
     parent: 'phaser-container',

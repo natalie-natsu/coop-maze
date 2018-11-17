@@ -10,7 +10,7 @@ import './Game.css';
 class Game extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { isJoining: false, mapRenderer: false };
+    this.state = { isJoining: false, mapRendered: false };
   }
 
   componentDidMount() {
@@ -53,6 +53,13 @@ class Game extends React.Component {
     }
   }
 
+  renderMap(map = this.props.game.map) {
+    if (!this.state.mapRendered && map) {
+      this.setState({ mapRendered: true });
+      render(map);
+    }
+  }
+
   render() {
     const { game } = this.props;
     return (
@@ -63,13 +70,6 @@ class Game extends React.Component {
         </div>
       </div>
     );
-  }
-
-  renderMap(map = this.props.game.map) {
-    if (!this.state.mapRendered && map) {
-      this.setState({ mapRendered: true });
-      render(map);
-    }
   }
 }
 
