@@ -56,7 +56,7 @@ class Game extends React.Component {
   startEngine(map = this.props.game.map) {
     if (!this.state.engineStarted && map) {
       this.setState({ engineStarted: true });
-      startEngine(map);
+      startEngine(map, this.props.socket);
     }
   }
 

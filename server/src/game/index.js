@@ -64,12 +64,25 @@ export class Game {
   broadcast() {
     const state = {
       id: this.id,
-      users: Array.from(this.users.values()).map(user => user.name),
-      map: this.map
+      map: this.map,
+      users: Array.from(this.users.values()).map(user => ({
+        id: user.id,
+        name: user.name,
+        x: user.x,
+        y: user.y
+      }))
     };
 
     server.io.to(this.id).emit(Events.UPDATE_GAME, state);
     return state;
+  }
+
+  broadcastPosition(user) {
+    server.io.to(this.id).emit(Events.UPDATE_POSITION, {
+      id: user.id,
+      x: user.x,
+      y: user.y
+    });
   }
 
   delete() {

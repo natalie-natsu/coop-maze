@@ -1,8 +1,9 @@
 import { Display, Scene } from 'phaser';
 
+import { Events } from '../events';
 import { settings } from '../settings';
 
-export default function (inputMap) {
+export default function (inputMap, socket) {
   function getTileMapData() {
     const tilesIds = {
       '#': 0,
@@ -30,6 +31,11 @@ export default function (inputMap) {
       this.player = null;
       this.camera = null;
       this.cursors = null;
+      this.objects = new Map();
+
+      this.listners = new Map([
+        [Events.UPDATE_POSITION, this.updatePosition],
+      ]);
     }
 
     preload() {
@@ -43,6 +49,7 @@ export default function (inputMap) {
       this.initPlayer();
       this.initCamera();
       this.initKeyboard();
+      this.initSocket();
 
       // Debug
       if (settings.debug) {
@@ -71,6 +78,10 @@ export default function (inputMap) {
         .setSize(30, 40)
         .setOffset(0, 24);
 
+      this.objects.set(socket.id, this.player);
+      this.player.emittedX = null;
+      this.player.emittedY = null;
+
       this.physics.add.collider(this.player, this.layers.walls);
 
       const directions = ['left', 'right', 'front', 'back'];
@@ -98,6 +109,12 @@ export default function (inputMap) {
 
     initKeyboard() {
       this.cursors = this.input.keyboard.createCursorKeys();
+    }
+
+    initSocket() {
+      this.listners.forEach((listener, event) => {
+        socket.on(event, listener.bind(this));
+      });
     }
 
     initDebug() {
@@ -135,6 +152,8 @@ export default function (inputMap) {
         this.player.body.setVelocityY(settings.playerSpeed);
       }
 
+      this.emitPosition();
+
       // Normalize and scale the velocity so that player can't move faster along a diagonal
       this.player.body.velocity.normalize().scale(settings.playerSpeed);
 
@@ -155,6 +174,25 @@ export default function (inputMap) {
         else if (prevVelocity.x > 0) this.player.setTexture('atlas', 'right');
         else if (prevVelocity.y < 0) this.player.setTexture('atlas', 'back');
         else if (prevVelocity.y > 0) this.player.setTexture('atlas', 'front');
+      }
+    }
+
+    emitPosition() {
+      if (this.player.emittedX !== this.player.x || this.player.emittedY !== this.player.y) {
+        socket.emit(Events.MOVE, this.player.x, this.player.y);
+        this.player.emittedX = this.player.x;
+        this.player.emittedY = this.player.y;
+      }
+    }
+
+    updatePosition(position) {
+      if (position.id === socket.id) {
+        // TODO set player position only if he is too far away from his real position
+      } else if (this.objects.has(position.id)) {
+        const object = this.objects.get(position.id);
+
+        object.x = position.x;
+        object.y = position.y;
       }
     }
   };
