@@ -1,8 +1,8 @@
 import uuidv4 from "uuid/v4";
 import { exec } from "child_process";
 
-import { server } from '../';
-import { env } from '../env';
+import { server } from "../";
+import { env } from "../env";
 import { Events } from "../events";
 
 export class Game {
@@ -10,11 +10,19 @@ export class Game {
     this.id = uuidv4();
     this.users = new Map();
 
-    exec(`${env.PYTHON_CMD} ${process.cwd()}/../maze-generator`, (err, stdout) => {
+    const cmdPath = `${process.cwd()}/maze-generator`;
+    const cmdOptions = `${env.MAP_WIDTH} ${env.MAP_HEIGHT}`;
+    const cmd = `${env.PYTHON_CMD} ${cmdPath} ${cmdOptions}`;
+
+    const cmdConfig = {
+      maxBuffer: env.MAP_WIDTH * env.MAP_HEIGHT + env.MAP_HEIGHT
+    };
+
+    exec(cmd, cmdConfig, (err, stdout) => {
       if (err) {
         console.error(err);
       } else {
-        this.map = stdout.trim().split('\n');
+        this.map = stdout.trim().split("\n");
       }
 
       this.join(user);
