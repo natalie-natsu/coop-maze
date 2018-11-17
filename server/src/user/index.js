@@ -11,7 +11,7 @@ export class User {
     this.game = null;
     this.name = faker.name.firstName();
 
-    this.log('connected');
+    this.log("connected");
 
     this.listners = new Map([
       [Events.SET_USER_NAME, this.setName],
@@ -95,6 +95,6 @@ export class User {
       this.leaveGame();
     }
 
-    this.log('disconnected');
+    this.log("disconnected");
   }
 }

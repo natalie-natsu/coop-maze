@@ -45,7 +45,7 @@ export class Game {
     if (this.deleteTimeoutId) {
       clearTimeout(this.deleteTimeoutId);
       this.deleteTimeoutId = null;
-      this.log('will not be deleted');
+      this.log("will not be deleted");
     }
 
     if (user.game) {
@@ -80,7 +80,7 @@ export class Game {
     this.deleteTimeoutId = setTimeout(() => {
       server.games.delete(this.id);
       this.deleteTimeoutId = null;
-      this.log('deleted');
+      this.log("deleted");
     }, Game.DELETE_TIMEOUT * 1000);
 
     this.log(`will be deleted in ${Game.DELETE_TIMEOUT} seconds`);
