@@ -1,22 +1,24 @@
 import { Display, Scene } from 'phaser';
 
-import { Events } from '../events';
-import { settings } from '../settings';
+import { Events } from '../../events';
+import { settings } from '../../settings';
+import getTileId from './tiles';
 
 export default function (inputMap, socket) {
   function getTileMapData() {
-    const tilesIds = {
-      '#': 0,
-      ' ': -1,
-      '*': -1,
-    };
+    const result = inputMap.map((row, y) => row.split('').map((current, x) => {
+      const top = y > 0 ? row[y - 1][x] : '#';
+      const right = x < settings.width - 1 ? row[y][x + 1] : '#';
+      const bottom = y < settings.height - 1 ? row[y + 1][x] : '#';
+      const left = x > 0 ? row[y][x - 1] : '#';
 
-    const result = inputMap.map(row => row.split('').map(input => tilesIds[input]));
+      return getTileId(current, [top, right, bottom, left]);
+    }));
 
     // Temp fix for spawning point ; TODO remove it
     for (let y = 1; y < 10; y += 1) {
       for (let x = 1; x < 10; x += 1) {
-        result[y][x] = -1;
+        result[y][x] = 0;
       }
     }
 
@@ -68,7 +70,7 @@ export default function (inputMap, socket) {
     initLayers() {
       const tiles = this.map.addTilesetImage('tiles');
       this.layers.walls = this.map.createStaticLayer(0, tiles, 0, 0);
-      this.layers.walls.setCollision(0);
+      this.layers.walls.setCollisionBetween(1, 13);
     }
 
     initPlayer() {

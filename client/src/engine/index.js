@@ -10,6 +10,7 @@ export default function (map, socket) {
     parent: 'phaser-container',
     width: settings.width,
     height: settings.height,
+    backgroundColor: '#ffffff',
     pixelArt: true,
     scene: getMainSceneClass(map, socket),
     physics: {
