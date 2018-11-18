@@ -6,12 +6,11 @@ import { env } from "../env";
 import { Events } from "../events";
 
 export class Game {
-  static DELETE_TIMEOUT = 10; // seconds
-
   constructor(user, callback) {
     this.id = uuidv4();
     this.users = new Map();
     this.deleteTimeoutId = null;
+    this.started = false;
 
     const cmdPath = `${process.cwd()}/maze-generator`;
     const cmdOptions = `${env.MAP_WIDTH} ${env.MAP_HEIGHT}`;
@@ -38,7 +37,7 @@ export class Game {
   }
 
   join(user) {
-    if (this.users.has(user.id)) {
+    if (this.users.has(user.id) || this.started) {
       return;
     }
 
@@ -61,10 +60,31 @@ export class Game {
     user.socket.leave(this.id);
   }
 
+  start() {
+    if (this.started) {
+      return;
+    }
+
+    if (
+      this.users.size > 1 &&
+      [...this.users.values()].some(user => !user.ready)
+    ) {
+      return;
+    }
+
+    this.started = true;
+
+    setTimeout(() => {
+      server.io.to(this.id).emit(Events.START_GAME);
+      this.log("starts");
+    }, env.START_GAME_TIMEOUT * 1000);
+
+    this.log(`will start in ${env.START_GAME_TIMEOUT} seconds`);
+  }
+
   broadcast() {
     const state = {
       id: this.id,
-      map: this.map,
       users: Array.from(this.users.values()).map(user => ({
         id: user.id,
         name: user.name,
@@ -74,7 +94,11 @@ export class Game {
     };
 
     server.io.to(this.id).emit(Events.UPDATE_GAME, state);
-    return state;
+
+    return {
+      ...state,
+      map: this.map
+    };
   }
 
   broadcastPosition(user) {
@@ -94,8 +118,9 @@ export class Game {
       server.games.delete(this.id);
       this.deleteTimeoutId = null;
       this.log("deleted");
-    }, Game.DELETE_TIMEOUT * 1000);
+      server.logTotalGames();
+    }, env.DELETE_GAME_TIMEOUT * 1000);
 
-    this.log(`will be deleted in ${Game.DELETE_TIMEOUT} seconds`);
+    this.log(`will be deleted in ${env.DELETE_GAME_TIMEOUT} seconds`);
   }
 }

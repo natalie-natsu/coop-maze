@@ -10,6 +10,7 @@ export class User {
     this.id = socket.id;
     this.game = null;
     this.name = faker.name.firstName();
+    this.ready = false;
     this.x = null;
     this.y = null;
 
@@ -17,8 +18,10 @@ export class User {
 
     this.listners = new Map([
       [Events.SET_USER_NAME, this.setName],
+      [Events.SET_USER_READY, this.setReady],
       [Events.NEW_GAME, this.newGame],
       [Events.JOIN_GAME, this.joinGame],
+      [Events.START_GAME, this.startGame],
       [Events.LEAVE_GAME, this.leaveGame],
       [Events.MOVE, this.onMove],
       ["disconnect", this.onDisconnect]
@@ -43,7 +46,6 @@ export class User {
     }
 
     this.log(`renamed to ${name}`);
-
     this.name = name;
 
     if (this.game) {
@@ -51,32 +53,62 @@ export class User {
     }
   }
 
+  setReady(ready) {
+    if (!this.game || ready === this.ready) {
+      return;
+    }
+
+    this.log(ready ? "is ready" : "is not ready");
+
+    this.ready = ready;
+    this.game.broadcast();
+    this.game.start();
+  }
+
   newGame(callback) {
     this.leaveGame();
     this.game = new Game(this, () => {
       server.games.set(this.game.id, this.game);
       this.initPosition();
-      callback(this.game.broadcast());
+      callback && callback(this.game.broadcast());
       this.log(`created game ${this.game.id}`);
+      server.logTotalGames();
     });
   }
 
   joinGame(gameId, callback) {
     this.leaveGame();
 
-    if (server.games.has(gameId)) {
-      this.game = server.games.get(gameId);
-      this.game.join(this);
-      this.initPosition();
-      callback(this.game.broadcast());
-      this.log(`joined game ${this.game.id}`);
+    if (!server.games.has(gameId)) {
+      return;
     }
+
+    const game = server.games.get(gameId);
+
+    if (game.started) {
+      return;
+    }
+
+    this.log(`joined game ${game.id}`);
+
+    this.game = game;
+    this.game.join(this);
+    this.initPosition();
+    callback && callback(this.game.broadcast());
   }
 
   initPosition() {
     // TODO: use spawn point
     this.x = 320;
     this.y = 320;
+  }
+
+  startGame() {
+    if (!this.game || !this.game.users.has(this.id)) {
+      return;
+    }
+
+    this.game.start();
   }
 
   leaveGame() {
@@ -98,22 +130,25 @@ export class User {
   }
 
   onMove(x, y) {
-    if (this.game) {
-      // TODO check if user is cheating (moving too fast)
-      this.x = x;
-      this.y = y;
-
-      this.game.broadcastPosition(this);
+    if (!this.game || !this.game.started) {
+      return;
     }
+
+    // TODO check if user is cheating (moving too fast)
+    this.x = x;
+    this.y = y;
+
+    this.game.broadcastPosition(this);
   }
 
   onDisconnect() {
-    server.users.delete(this.id);
-
     if (this.game) {
       this.leaveGame();
     }
 
     this.log("disconnected");
+
+    server.users.delete(this.id);
+    server.logTotalUsers();
   }
 }
