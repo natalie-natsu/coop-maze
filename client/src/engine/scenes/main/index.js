@@ -7,10 +7,10 @@ import getTileId from './tiles';
 export default function (inputMap, socket) {
   function getTileMapData() {
     const result = inputMap.map((row, y) => row.split('').map((current, x) => {
-      const top = y > 0 ? row[y - 1][x] : '#';
-      const right = x < settings.width - 1 ? row[y][x + 1] : '#';
-      const bottom = y < settings.height - 1 ? row[y + 1][x] : '#';
-      const left = x > 0 ? row[y][x - 1] : '#';
+      const top = y > 0 ? inputMap[y - 1][x] : '#';
+      const right = x < row.length - 1 ? inputMap[y][x + 1] : '#';
+      const bottom = y < inputMap.length - 1 ? inputMap[y + 1][x] : '#';
+      const left = x > 0 ? inputMap[y][x - 1] : '#';
 
       return getTileId(current, [top, right, bottom, left]);
     }));
