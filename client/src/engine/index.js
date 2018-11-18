@@ -3,7 +3,7 @@ import Phaser from 'phaser';
 import { settings } from './settings';
 import getMainSceneClass from './scenes/main';
 
-export default function (map) {
+export default function (map, socket) {
   // eslint-disable-next-line no-new
   new Phaser.Game({
     type: Phaser.AUTO,
@@ -11,7 +11,7 @@ export default function (map) {
     width: settings.width,
     height: settings.height,
     pixelArt: true,
-    scene: getMainSceneClass(map),
+    scene: getMainSceneClass(map, socket),
     physics: {
       default: 'arcade',
       arcade: {

@@ -10,6 +10,8 @@ export class User {
     this.id = socket.id;
     this.game = null;
     this.name = faker.name.firstName();
+    this.x = null;
+    this.y = null;
 
     this.log("connected");
 
@@ -18,6 +20,7 @@ export class User {
       [Events.NEW_GAME, this.newGame],
       [Events.JOIN_GAME, this.joinGame],
       [Events.LEAVE_GAME, this.leaveGame],
+      [Events.MOVE, this.onMove],
       ["disconnect", this.onDisconnect]
     ]);
   }
@@ -52,10 +55,10 @@ export class User {
     this.leaveGame();
     this.game = new Game(this, () => {
       server.games.set(this.game.id, this.game);
+      this.initPosition();
       callback(this.game.broadcast());
+      this.log(`created game ${this.game.id}`);
     });
-
-    this.log(`created game ${this.game.id}`);
   }
 
   joinGame(gameId, callback) {
@@ -64,10 +67,16 @@ export class User {
     if (server.games.has(gameId)) {
       this.game = server.games.get(gameId);
       this.game.join(this);
+      this.initPosition();
       callback(this.game.broadcast());
-
       this.log(`joined game ${this.game.id}`);
     }
+  }
+
+  initPosition() {
+    // TODO: use spawn point
+    this.x = 320;
+    this.y = 320;
   }
 
   leaveGame() {
@@ -86,6 +95,16 @@ export class User {
     }
 
     this.game = null;
+  }
+
+  onMove(x, y) {
+    if (this.game) {
+      // TODO check if user is cheating (moving too fast)
+      this.x = x;
+      this.y = y;
+
+      this.game.broadcastPosition(this);
+    }
   }
 
   onDisconnect() {
