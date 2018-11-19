@@ -2,12 +2,12 @@
 https://material.io/tools/color/#!/?view.left=0&view.right=1&primary.color=757575&secondary.color=007bff
  */
 
-$primary: #5c6bc0;
-$primaryLight: #8d98f2;
-$primaryDark: #23408e;
-$secondary: #424242;
-$secondaryLight: #6d6d6d;
-$secondaryDark: #1b1b1b;
+$primary: #d32f2f;
+$primaryLight: #ff6659;
+$primaryDark: #9a0007;
+$secondary: #b71c1c;
+$secondaryLight: #f05545;
+$secondaryDark: #7f0000;
 $light: #f5f5f6;
 $dark: #000;
 
@@ -16,7 +16,7 @@ $textColorForBg: (
   primaryLight: $dark,
   primaryDark: $light,
   secondary: $light,
-  secondaryLight: $light,
+  secondaryLight: $dark,
   secondaryDark: $light,
   dark: $light,
   light: $dark

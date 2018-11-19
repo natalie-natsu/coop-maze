@@ -61,15 +61,9 @@ class Game extends React.Component {
   }
 
   render() {
-    const { game } = this.props;
     return (
       <div id="game">
-        <div className="container">
-          <div className="text-center">
-            <div id="phaser-container" />
-            Game {game.id}
-          </div>
-        </div>
+        <div id="phaser-container" />
       </div>
     );
   }

@@ -1,6 +1,6 @@
 export const settings = {
-  width: 800,
-  height: 600,
+  width: 768,
+  height: 768,
   tileSize: 64,
   debug: false,
   playerSpeed: 175,

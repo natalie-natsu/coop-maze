@@ -1,11 +1,11 @@
 {
   "test": "Yeah, le test marche !",
   "undefined": "Non défini",
-  "splashLoading": "Chargement du projet...",
+  "splashLoading": "Chargement du jeu...",
   "project": {
-    "title": "Titre du projet",
-    "name": "Nom",
-    "shortName": "Surnom"
+    "title": "A-CPU mod.1",
+    "name": "Alien-CPU mod.1",
+    "shortName": "A-CPU"
   },
   "language": {
     "en": "English",

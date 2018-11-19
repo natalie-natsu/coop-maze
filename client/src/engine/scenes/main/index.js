@@ -70,7 +70,7 @@ export default function (inputMap, socket) {
     initLayers() {
       const tiles = this.map.addTilesetImage('tiles');
       this.layers.walls = this.map.createStaticLayer(0, tiles, 0, 0);
-      this.layers.walls.setCollisionBetween(1, 13);
+      this.layers.walls.setCollisionBetween(1, 17);
     }
 
     initPlayer() {
