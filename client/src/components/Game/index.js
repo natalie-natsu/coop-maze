@@ -1,4 +1,5 @@
 import React from 'react';
+import every from 'lodash/every';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { translate } from 'react-i18next';
@@ -9,11 +10,18 @@ import startEngine from '../../engine';
 import Layout from './Layout';
 
 import './Game.css';
+import Lobby from './Lobby';
+import SplashScreen from '../SplashScreen';
 
 class Game extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { isJoining: false, engineStarted: false };
+    this.state = {
+      isJoining: false,
+      engineStarted: false,
+      gameStarted: false,
+      splash: false,
+    };
   }
 
   componentDidMount() {
@@ -26,12 +34,17 @@ class Game extends React.Component {
         this.subscribeToGame();
       }
     }
+  }
 
-    this.startEngine();
+  componentDidUpdate(prevState) {
+    if (prevState.gameStarted === false && this.state.gameStarted) {
+      this.startEngine();
+    }
   }
 
   componentWillUnmount() {
-    // TODO: emit LEAVE_GAME
+    const { socket } = this.props;
+    socket.emit('LEAVE_GAME');
   }
 
   subscribeToGame() {
@@ -40,6 +53,13 @@ class Game extends React.Component {
       // eslint-disable-next-line no-console
       console.log('on UPDATE_GAME:', game);
       dispatch(updateGame(game));
+      if (every(game.users, 'ready')) {
+        this.setState({ splash: true });
+      }
+    });
+    socket.on('START_GAME', () => {
+      this.setState({ gameStarted: true, splash: false });
+      this.startEngine();
     });
   }
 
@@ -64,10 +84,15 @@ class Game extends React.Component {
   }
 
   render() {
+    const { gameStarted, splash } = this.state;
     return (
       <div id="game">
         <Layout>
-          <div id="phaser-container" />
+          <div>
+            {splash && <SplashScreen text="component:Game.startInFIve" />}
+            {!gameStarted && <Lobby />}
+            <div id="phaser-container" />
+          </div>
         </Layout>
       </div>
     );

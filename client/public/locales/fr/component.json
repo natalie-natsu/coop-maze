@@ -16,9 +16,9 @@
   "Game": {
     "Create": {
       "button": {
-        "start": "Commencer la partie",
-        "continue": "Continuer dans le donjon"
+        "start": "Commencer la partie"
       }
-    }
+    },
+    "startInFIve": "Commence dans 5s..."
   }
 }

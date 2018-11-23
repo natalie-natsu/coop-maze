@@ -16,9 +16,9 @@
   "Game": {
     "Create": {
       "button": {
-        "start": "Start the game",
-        "continue": "Continue in the dungeon"
+        "start": "Start the game"
       }
-    }
+    },
+    "startInFIve": "Start in 5s..."
   }
 }
