@@ -16,7 +16,8 @@
     flex-flow: row nowrap;
     justify-content: flex-start;
 
-    .container {
+    .container,
+    .container-fluid {
       flex-wrap: nowrap;
 
       .navbar-brand {

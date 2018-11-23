@@ -1,9 +1,5 @@
 #game {
-  margin-top: -1rem;
   #phaser-container {
-    height: calc(100vh - 54px);
-    @media screen and (min-width: 768px) {
-      height: calc(100vh - 62px);
-    }
+    height: 100vh;
   }
 }

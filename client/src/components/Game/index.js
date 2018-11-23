@@ -5,6 +5,9 @@ import { translate } from 'react-i18next';
 
 import { updateGame } from '../../actions/game';
 import startEngine from '../../engine';
+
+import Layout from './Layout';
+
 import './Game.css';
 
 class Game extends React.Component {
@@ -63,7 +66,9 @@ class Game extends React.Component {
   render() {
     return (
       <div id="game">
-        <div id="phaser-container" />
+        <Layout>
+          <div id="phaser-container" />
+        </Layout>
       </div>
     );
   }

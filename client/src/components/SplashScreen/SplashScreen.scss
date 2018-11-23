@@ -7,8 +7,8 @@
   z-index: 1000;
   width: 100%;
   height: 100vh;
-  background-color: transparentize($light, 0.1);
-  color: $primaryDark;
+  background-color: transparentize($dark, 0.1);
+  color: $light;
   text-align: center;
 }
 

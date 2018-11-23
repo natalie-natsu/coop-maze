@@ -24,7 +24,7 @@ class MainHeader extends React.Component {
     return (
       <header id="main-header">
         <nav className="navbar navbar-expand-lg navbar-dark">
-          <div className="container position-relative">
+          <div className="container-fluid position-relative">
             <Link to={routes.home} className="navbar-brand mb-0 h1 d-none d-md-inline">
               {t('project.title')}
             </Link>

@@ -3,9 +3,10 @@
   "undefined": "Undefined",
   "splashLoading": "Game is loading...",
   "project": {
-    "title": "A-CPU mod.1",
+    "title": "A-CPU.1",
     "name": "Alien-CPU mod.1",
-    "shortName": "A-CPU"
+    "shortName": "AC1",
+    "credo": "Coop rogue-like made for the Game Off 2018"
   },
   "language": {
     "en": "English",

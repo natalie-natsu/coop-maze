@@ -44,14 +44,13 @@ class App extends React.Component {
         <BrowserRouter>
           <div>
             <Switch>
+              <Route exact path={routes.game} component={Game} />
               <Layout>
                 <Switch>
-                  <Route exact path={routes.game} component={Game} />
                   <Route exact path={routes.home} component={Home} />
-                  <Route path={routes.notAllowed} component={NotAllowed} />
-                  <Route component={NoMatch} />
                 </Switch>
               </Layout>
+              <Route path={routes.notAllowed} component={NotAllowed} />
               <Route component={NoMatch} />
             </Switch>
           </div>
