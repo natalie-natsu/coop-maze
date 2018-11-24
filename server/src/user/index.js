@@ -164,16 +164,11 @@ export class User {
       return;
     }
 
-    if (
-      Engine.moveIsValid(this.x, this.y, x, y) &&
-      Engine.areSpeedsValid(vx, vy)
-    ) {
-      this.x = x;
-      this.y = y;
+    this.x = x;
+    this.y = y;
 
-      this.vx = vx;
-      this.vy = vy;
-    }
+    this.vx = vx;
+    this.vy = vy;
 
     this.game.broadcastPosition(this);
   }

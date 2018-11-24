@@ -1,5 +1,5 @@
 import { Display, Scene } from 'phaser';
-import { isEqual, throttle } from 'lodash';
+import { isEqual } from 'lodash';
 
 import Events from '../../events';
 import settings from '../../settings';
@@ -19,10 +19,6 @@ export default function (inputGame, socket) {
     }));
   }
 
-  function getDistanceBetween(x1, y1, x2, y2) {
-    return Math.sqrt(((x1 - x2) ** 2) + ((y1 - y2) ** 2));
-  }
-
   return class MainScene extends Scene {
     constructor() {
       super();
@@ -34,14 +30,8 @@ export default function (inputGame, socket) {
       this.players = new Map();
 
       this.listners = new Map([
-        [Events.UPDATE_POSITION, this.throttle(this.onUpdatePosition)],
+        [Events.UPDATE_POSITION, this.onUpdatePosition.bind(this)],
       ]);
-
-      this.emitPosition = this.throttle(this.emitPositionUnThrottled);
-    }
-
-    throttle(callback) {
-      return throttle(callback.bind(this), 1000 / settings.maxEmitsPerSecond);
     }
 
     preload() {
@@ -218,7 +208,7 @@ export default function (inputGame, socket) {
       });
     }
 
-    emitPositionUnThrottled() {
+    emitPosition() {
       const values = {
         x: this.player.x,
         y: this.player.y,
@@ -237,13 +227,6 @@ export default function (inputGame, socket) {
         const player = this.players.get(position.id);
         player.setPosition(position.x, position.y);
         player.body.setVelocity(position.vx, position.vy);
-      } else {
-        const distance = getDistanceBetween(this.player.x, this.player.y, position.x, position.y);
-
-        if (distance > settings.maxMoveDistanceAllowed) {
-          this.player.setPosition(position.x, position.y);
-          this.player.body.setVelocity(position.vx, position.vy);
-        }
       }
     }
   };

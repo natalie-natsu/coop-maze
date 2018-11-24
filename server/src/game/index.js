@@ -1,6 +1,5 @@
 import uuidv4 from "uuid/v4";
 import { exec } from "child_process";
-import throttle from "lodash/throttle";
 
 import { server } from "../";
 import { env } from "../env";
@@ -13,11 +12,6 @@ export class Game {
     this.users = new Map();
     this.deleteTimeoutId = null;
     this.started = false;
-
-    this.emit = throttle(
-      (...args) => server.io.to(this.id).emit(...args),
-      1000 / env.MAX_EMITS_PER_SECOND
-    );
 
     const cmdPath = `${process.cwd()}/maze-generator`;
     const cmdOptions = `${env.MAP_WIDTH} ${env.MAP_HEIGHT}`;
@@ -105,10 +99,6 @@ export class Game {
     this.log(`will start in ${env.START_GAME_TIMEOUT} seconds`);
   }
 
-  throttleBroadcast(method) {
-    return throttle(method.bind(this), 1000 / env.MAX_EMITS_PER_SECOND);
-  }
-
   broadcast() {
     const state = {
       id: this.id,
@@ -121,7 +111,7 @@ export class Game {
       }))
     };
 
-    this.emit(Events.UPDATE_GAME, state);
+    server.io.to(this.id).emit(Events.UPDATE_GAME, state);
 
     return {
       ...state,
@@ -130,7 +120,7 @@ export class Game {
   }
 
   broadcastPosition(user) {
-    this.emit(Events.UPDATE_POSITION, {
+    server.io.to(this.id).emit(Events.UPDATE_POSITION, {
       id: user.id,
       x: user.x,
       y: user.y,
