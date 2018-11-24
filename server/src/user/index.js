@@ -3,6 +3,7 @@ import faker from "faker";
 import { Events } from "../events";
 import { Game } from "../game";
 import { server } from "../";
+import { Engine } from "../engine";
 
 export class User {
   constructor(socket) {
@@ -21,7 +22,6 @@ export class User {
       [Events.SET_USER_READY, this.setReady],
       [Events.NEW_GAME, this.newGame],
       [Events.JOIN_GAME, this.joinGame],
-      [Events.START_GAME, this.startGame],
       [Events.LEAVE_GAME, this.leaveGame],
       [Events.MOVE, this.onMove],
       ["disconnect", this.onDisconnect]
@@ -103,14 +103,6 @@ export class User {
     this.y = 320;
   }
 
-  startGame() {
-    if (!this.game || !this.game.users.has(this.id)) {
-      return;
-    }
-
-    this.game.start();
-  }
-
   leaveGame() {
     if (!this.game || !this.game.users.has(this.id)) {
       return;
@@ -134,11 +126,12 @@ export class User {
       return;
     }
 
-    // TODO check if user is cheating (moving too fast)
-    this.x = x;
-    this.y = y;
+    if (Engine.moveIsValid(this.x, this.y, x, y)) {
+      this.x = x;
+      this.y = y;
 
-    this.game.broadcastPosition(this);
+      this.game.broadcastPosition(this);
+    }
   }
 
   onDisconnect() {
