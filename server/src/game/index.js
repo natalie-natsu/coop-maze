@@ -1,9 +1,11 @@
 import uuidv4 from "uuid/v4";
 import { exec } from "child_process";
+import throttle from "lodash/throttle";
 
 import { server } from "../";
 import { env } from "../env";
 import { Events } from "../events";
+import { Engine } from "../engine";
 
 export class Game {
   constructor(user, callback) {
@@ -11,6 +13,11 @@ export class Game {
     this.users = new Map();
     this.deleteTimeoutId = null;
     this.started = false;
+
+    this.emit = throttle(
+      (...args) => server.io.to(this.id).emit(...args),
+      1000 / env.MAX_EMITS_PER_SECOND
+    );
 
     const cmdPath = `${process.cwd()}/maze-generator`;
     const cmdOptions = `${env.MAP_WIDTH} ${env.MAP_HEIGHT}`;
@@ -25,13 +32,14 @@ export class Game {
         console.error(err);
       } else {
         this.map = stdout.trim().split("\n");
+        this.spawnPoint = [4, 4]; // TODO search for "*" char
 
         // Temp fix for spawning point ; TODO remove it
         for (let y = 1; y < 10; y += 1) {
           for (let x = 1; x < 10; x += 1) {
-            this.map[y] = this.map[y].split('');
-            this.map[y][x] = x === 4 && y === 4 ? "*" : " ";
-            this.map[y] = this.map[y].join('');
+            this.map[y] = this.map[y].split("");
+            this.map[y][x] = " ";
+            this.map[y] = this.map[y].join("");
           }
         }
       }
@@ -46,7 +54,11 @@ export class Game {
   }
 
   join(user) {
-    if (this.users.has(user.id) || this.started || this.users.size === 4) {
+    if (
+      this.users.has(user.id) ||
+      this.started ||
+      this.users.size === Engine.MAX_PLAYERS
+    ) {
       return false;
     }
 
@@ -93,6 +105,10 @@ export class Game {
     this.log(`will start in ${env.START_GAME_TIMEOUT} seconds`);
   }
 
+  throttleBroadcast(method) {
+    return throttle(method.bind(this), 1000 / env.MAX_EMITS_PER_SECOND);
+  }
+
   broadcast() {
     const state = {
       id: this.id,
@@ -105,7 +121,7 @@ export class Game {
       }))
     };
 
-    server.io.to(this.id).emit(Events.UPDATE_GAME, state);
+    this.emit(Events.UPDATE_GAME, state);
 
     return {
       ...state,
@@ -114,10 +130,12 @@ export class Game {
   }
 
   broadcastPosition(user) {
-    server.io.to(this.id).emit(Events.UPDATE_POSITION, {
+    this.emit(Events.UPDATE_POSITION, {
       id: user.id,
       x: user.x,
-      y: user.y
+      y: user.y,
+      vx: user.vx,
+      vy: user.vy
     });
   }
 

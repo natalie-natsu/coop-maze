@@ -4,6 +4,7 @@ import { Events } from "../events";
 import { Game } from "../game";
 import { server } from "../";
 import { Engine } from "../engine";
+import { env } from "../env";
 
 export class User {
   constructor(socket) {
@@ -14,6 +15,8 @@ export class User {
     this.ready = false;
     this.x = null;
     this.y = null;
+    this.vx = 0;
+    this.vy = 0;
 
     this.log("connected");
 
@@ -104,9 +107,33 @@ export class User {
   }
 
   initPosition() {
-    // TODO: use spawn point
-    this.x = 320;
-    this.y = 320;
+    const [x, y] = this.game.spawnPoint;
+
+    switch (this.game.users.size) {
+      case 1:
+        this.x = x * env.TILE_SIZE;
+        this.y = (y - 1) * env.TILE_SIZE;
+        break;
+      case 2:
+        this.x = (x + 1) * env.TILE_SIZE;
+        this.y = y * env.TILE_SIZE;
+        break;
+      case 3:
+        this.x = x * env.TILE_SIZE;
+        this.y = (y + 1) * env.TILE_SIZE;
+        break;
+      case 4:
+        this.x = (x - 1) * env.TILE_SIZE;
+        this.y = y * env.TILE_SIZE;
+        break;
+      default:
+        this.x = x * env.TILE_SIZE;
+        this.y = y * env.TILE_SIZE;
+        break;
+    }
+
+    this.x += env.TILE_SIZE / 2;
+    this.y += env.TILE_SIZE / 2;
   }
 
   leaveGame() {
@@ -125,19 +152,30 @@ export class User {
     }
 
     this.game = null;
+    this.ready = false;
+    this.x = null;
+    this.y = null;
+    this.vx = 0;
+    this.vy = 0;
   }
 
-  onMove(x, y) {
+  onMove({ x, y, vx, vy }) {
     if (!this.game || !this.game.started) {
       return;
     }
 
-    if (Engine.moveIsValid(this.x, this.y, x, y)) {
+    if (
+      Engine.moveIsValid(this.x, this.y, x, y) &&
+      Engine.areSpeedsValid(vx, vy)
+    ) {
       this.x = x;
       this.y = y;
 
-      this.game.broadcastPosition(this);
+      this.vx = vx;
+      this.vy = vy;
     }
+
+    this.game.broadcastPosition(this);
   }
 
   onDisconnect() {

@@ -7,5 +7,8 @@ export const env = cleanEnv(process.env, {
   MAP_HEIGHT: num({ default: 75 }),
   DELETE_GAME_TIMEOUT: num({ default: 10 }),
   START_GAME_TIMEOUT: num({ default: 5 }),
-  MAX_MOVE_DISTANCE_ALLOWED: num({ default: 3 })
+  MAX_MOVE_DISTANCE_ALLOWED: num({ default: 25 }),
+  TILE_SIZE: num({ default: 64 }),
+  PLAYER_SPEED: num({ default: 175 }),
+  MAX_EMITS_PER_SECOND: num({ default: 60 })
 });

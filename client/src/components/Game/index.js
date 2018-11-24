@@ -29,6 +29,7 @@ class Game extends React.Component {
     this.onUpdateGameListener = this.onUpdateGame.bind(this);
     this.onStartGameListener = this.onStartGame.bind(this);
     this.onCannotJoinListener = this.onCannotJoin.bind(this);
+    this.game = null;
 
     this.state = {
       isJoining: false,
@@ -56,6 +57,10 @@ class Game extends React.Component {
     const { socket } = this.props;
     this.removeListeners();
     socket.emit('LEAVE_GAME');
+
+    if (this.game) {
+      this.game.destroy();
+    }
   }
 
   onUpdateGame(game) {
@@ -103,11 +108,11 @@ class Game extends React.Component {
     }
   }
 
-  startEngine(map = this.props.game.map) {
-    if (!this.state.engineStarted && map) {
+  startEngine(game = this.props.game) {
+    if (!this.state.engineStarted && game) {
       this.setState({ engineStarted: true }, () => {
         this.removeListeners();
-        startEngine(map, this.props.socket);
+        this.game = startEngine(game, this.props.socket);
       });
     }
   }
