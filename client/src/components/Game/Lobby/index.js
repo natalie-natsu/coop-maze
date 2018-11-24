@@ -3,25 +3,20 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { translate } from 'react-i18next';
 
-import { updatePlayers } from '../../../actions/game';
-
 import './Lobby.css';
 
 class Lobby extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { isSettingReady: false };
+    this.state = { isReady: false };
   }
 
   setReady() {
-    if (!this.state.isSettingReady) {
-      this.setState({ isSettingReady: true });
-      const { dispatch, socket } = this.props;
-      socket.emit('SET_USER_READY', (users) => {
-        dispatch(updatePlayers(users));
-        this.setState({ isSettingReady: false });
-      });
-    }
+    const isReady = !this.state.isReady;
+
+    this.setState({ isReady }, () => {
+      this.props.socket.emit('SET_USER_READY', isReady);
+    });
   }
 
   renderUser({ id, name, ready }) {
@@ -29,19 +24,37 @@ class Lobby extends React.Component {
       <li key={`player-${id}`}>
         <span>{id} - {name}</span>
         <span className="form-group form-check d-inline ml-3">
-          <input
-            type="checkbox"
-            className="form-check-input"
-            id={`ready-${id}`}
-            value={ready}
-            onClick={(e) => {
-              e.preventDefault();
-              this.setReady();
-            }}
-          />
+          {this.renderCheckbox(id, ready)}
           <label className="form-check-label" htmlFor={`ready-${id}`}>Ready</label>
         </span>
       </li>
+    );
+  }
+
+  renderCheckbox(id, ready) {
+    if (id === this.props.socket.id) {
+      return (
+        <input
+          type="checkbox"
+          className="form-check-input"
+          id={`ready-${id}`}
+          checked={ready}
+          onChange={(e) => {
+            e.preventDefault();
+            this.setReady();
+          }}
+        />
+      );
+    }
+
+    return (
+      <input
+        type="checkbox"
+        className="form-check-input"
+        id={`ready-${id}`}
+        checked={ready}
+        readOnly
+      />
     );
   }
 
@@ -56,9 +69,11 @@ class Lobby extends React.Component {
 }
 
 Lobby.propTypes = {
-  dispatch: PropTypes.func.isRequired,
   game: PropTypes.shape({ id: PropTypes.string, users: PropTypes.arrayOf(PropTypes.object) }).isRequired,
-  socket: PropTypes.shape({ emit: PropTypes.func }).isRequired,
+  socket: PropTypes.shape({
+    id: PropTypes.string,
+    emit: PropTypes.func,
+  }).isRequired,
 };
 
 export default translate()(connect(

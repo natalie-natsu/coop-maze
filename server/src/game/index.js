@@ -88,6 +88,7 @@ export class Game {
       users: Array.from(this.users.values()).map(user => ({
         id: user.id,
         name: user.name,
+        ready: user.ready,
         x: user.x,
         y: user.y
       }))
