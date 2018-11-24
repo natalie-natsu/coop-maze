@@ -19,6 +19,7 @@
         "start": "Commencer la partie"
       }
     },
-    "startInFIve": "Commence dans 5s..."
+    "startInFIve": "Commence dans 5s...",
+    "cannotJoin": "Impossible de rejoindre la partie ! :("
   }
 }

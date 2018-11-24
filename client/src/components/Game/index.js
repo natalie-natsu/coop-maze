@@ -3,6 +3,8 @@ import every from 'lodash/every';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { translate } from 'react-i18next';
+import faExclamationTriangle from '@fortawesome/fontawesome-free-solid/faExclamationTriangle';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { updateGame, updatePlayers } from '../../actions/game';
 import startEngine from '../../engine';
@@ -14,17 +16,26 @@ import Lobby from './Lobby';
 import SplashScreen from '../SplashScreen';
 
 class Game extends React.Component {
+  static renderCannotJoin() {
+    return (
+      <SplashScreen text="component:Game.cannotJoin">
+        <FontAwesomeIcon icon={faExclamationTriangle} />
+      </SplashScreen>);
+  }
+
   constructor(props) {
     super(props);
 
     this.onUpdateGameListener = this.onUpdateGame.bind(this);
     this.onStartGameListener = this.onStartGame.bind(this);
+    this.onCannotJoinListener = this.onCannotJoin.bind(this);
 
     this.state = {
       isJoining: false,
       engineStarted: false,
       gameStarted: false,
       splash: false,
+      cannotJoin: false,
     };
   }
 
@@ -33,6 +44,7 @@ class Game extends React.Component {
 
     if (socket) {
       if (!game.id) {
+        socket.on('CANNOT_JOIN', this.onCannotJoinListener);
         this.joinGame();
       } else {
         this.subscribeToGame();
@@ -61,10 +73,15 @@ class Game extends React.Component {
     });
   }
 
+  onCannotJoin() {
+    this.setState({ cannotJoin: true });
+  }
+
   removeListeners() {
     const { socket } = this.props;
     socket.removeListener('UPDATE_GAME', this.onUpdateGameListener);
     socket.removeListener('START_GAME', this.onStartGameListener);
+    socket.removeListener('CANNOT_JOIN', this.onCannotJoinListener);
   }
 
   subscribeToGame() {
@@ -96,12 +113,13 @@ class Game extends React.Component {
   }
 
   render() {
-    const { gameStarted, splash } = this.state;
+    const { gameStarted, splash, cannotJoin } = this.state;
     return (
       <div id="game">
         <Layout>
           <div>
             {splash && <SplashScreen text="component:Game.startInFIve" />}
+            {cannotJoin && Game.renderCannotJoin()}
             {!gameStarted && <Lobby />}
             <div id="phaser-container" />
           </div>

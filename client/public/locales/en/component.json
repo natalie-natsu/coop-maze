@@ -19,6 +19,7 @@
         "start": "Start the game"
       }
     },
-    "startInFIve": "Start in 5s..."
+    "startInFIve": "Start in 5s...",
+    "cannotJoin": "Cannot join the game! :("
   }
 }

@@ -6,11 +6,11 @@ import faCircleNotch from '@fortawesome/fontawesome-free-solid/faCircleNotch';
 import './SplashScreen.css';
 import ScreenEffect from '../ScreenEffect';
 
-const SplashScreen = ({ t, text, translated }) => (
+const SplashScreen = ({ t, text, translated, children }) => (
   <div className="splashScreen">
     <ScreenEffect navbar={false}>
       <div className="svg-container">
-        <FontAwesomeIcon icon={faCircleNotch} spin />
+        {children || <FontAwesomeIcon icon={faCircleNotch} spin />}
         <p className="mt-2">{(text && (translated ? text : t(text))) || t('splashLoading')}</p>
       </div>
     </ScreenEffect>
@@ -20,12 +20,14 @@ const SplashScreen = ({ t, text, translated }) => (
 SplashScreen.propTypes = {
   t: PropTypes.func.isRequired,
   text: PropTypes.string,
+  children: PropTypes.node,
   translated: PropTypes.bool,
 };
 
 
 SplashScreen.defaultProps = {
   text: null,
+  children: null,
   translated: false,
 };
 

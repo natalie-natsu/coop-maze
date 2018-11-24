@@ -92,9 +92,15 @@ export class User {
     this.log(`joined game ${game.id}`);
 
     this.game = game;
-    this.game.join(this);
-    this.initPosition();
-    callback && callback(this.game.broadcast());
+    const joined = this.game.join(this);
+
+    if (joined) {
+      this.initPosition();
+      callback && callback(this.game.broadcast());
+    } else {
+      this.socket.emit(Events.CANNOT_JOIN);
+      this.log(`can't join game ${game.id}`);
+    }
   }
 
   initPosition() {

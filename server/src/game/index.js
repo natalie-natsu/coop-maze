@@ -25,6 +25,15 @@ export class Game {
         console.error(err);
       } else {
         this.map = stdout.trim().split("\n");
+
+        // Temp fix for spawning point ; TODO remove it
+        for (let y = 1; y < 10; y += 1) {
+          for (let x = 1; x < 10; x += 1) {
+            this.map[y] = this.map[y].split('');
+            this.map[y][x] = x === 4 && y === 4 ? "*" : " ";
+            this.map[y] = this.map[y].join('');
+          }
+        }
       }
 
       this.join(user);
@@ -37,8 +46,8 @@ export class Game {
   }
 
   join(user) {
-    if (this.users.has(user.id) || this.started) {
-      return;
+    if (this.users.has(user.id) || this.started || this.users.size === 4) {
+      return false;
     }
 
     if (this.deleteTimeoutId) {
@@ -53,6 +62,8 @@ export class Game {
 
     this.users.set(user.id, user);
     user.socket.join(this.id);
+
+    return true;
   }
 
   leave(user) {

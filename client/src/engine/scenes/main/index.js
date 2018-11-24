@@ -6,7 +6,7 @@ import getTileId from './tiles';
 
 export default function (inputMap, socket) {
   function getTileMapData() {
-    const result = inputMap.map((row, y) => row.split('').map((current, x) => {
+    return inputMap.map((row, y) => row.split('').map((current, x) => {
       const top = y > 0 ? inputMap[y - 1][x] : '#';
       const right = x < row.length - 1 ? inputMap[y][x + 1] : '#';
       const bottom = y < inputMap.length - 1 ? inputMap[y + 1][x] : '#';
@@ -14,15 +14,6 @@ export default function (inputMap, socket) {
 
       return getTileId(current, [top, right, bottom, left]);
     }));
-
-    // Temp fix for spawning point ; TODO remove it
-    for (let y = 1; y < 10; y += 1) {
-      for (let x = 1; x < 10; x += 1) {
-        result[y][x] = 0;
-      }
-    }
-
-    return result;
   }
 
   return class MainScene extends Scene {

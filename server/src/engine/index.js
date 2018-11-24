@@ -1,4 +1,4 @@
-import { env } from '../env';
+import { env } from "../env";
 
 export class Engine {
   static getDistanceBetween(x1, y1, x2, y2) {
