@@ -109,13 +109,16 @@ export class Game {
 
       while (!spawnPoint) {
         const randomPoint = [
-          Math.floor(Math.random() * env.MAP_WIDTH),
-          Math.floor(Math.random() * env.MAP_HEIGHT)
+          Math.floor(Math.random() * env.MAP_WIDTH) * 64 + 32,
+          Math.floor(Math.random() * env.MAP_HEIGHT) * 64 + 32
         ];
         const alreadyTaken = this.mobs.some(mob =>
           isEqual([mob.x, mob.y], randomPoint)
         );
-        if (!alreadyTaken && map[randomPoint[1]][randomPoint[0]] === " ") {
+        if (
+          !alreadyTaken &&
+          map[(randomPoint[1] - 32) / 64][(randomPoint[0] - 32) / 64] === " "
+        ) {
           spawnPoint = randomPoint;
         }
       }
