@@ -123,7 +123,7 @@ export default function (inputGame, socket) {
     initMobs() {
       inputGame.mobs.forEach((mob) => {
         const physicalMob = this.physics.add
-          .sprite(mob.x, mob.y, `mob-${mob.type}`)
+          .sprite(mob.x, mob.y, `mob-${mob.id}`)
           .setSize(32, 32)
           .setOffset(0, 24);
 
