@@ -17,9 +17,9 @@ const Home = ({ t }) => (
           <div className="row">
             <div className="col-md-6">
               <h1 className="title">
-                <span className="title-word">Alien</span>
-                <span className="title-word">CPU</span>
-                <span className="title-word">mod.1</span>
+                <span className="title-word">Cowboys</span>
+                <span className="title-word">Versus</span>
+                <span className="title-word">Computer</span>
               </h1>
             </div>
             <div className="col-md-6">
