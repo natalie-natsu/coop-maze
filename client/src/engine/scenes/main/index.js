@@ -28,6 +28,7 @@ export default function (inputGame, socket) {
       this.camera = null;
       this.cursors = null;
       this.players = new Map();
+      this.mobs = [];
 
       this.listners = new Map([
         [Events.UPDATE_POSITION, this.onUpdatePosition.bind(this)],
@@ -40,6 +41,10 @@ export default function (inputGame, socket) {
       inputGame.users.forEach((user) => {
         this.load.atlas(`player-${user.id}`, '/assets/images/player.png', '/assets/atlas/player.json');
       });
+
+      inputGame.mobs.forEach((mob) => {
+        this.load.image(`mob-${mob.id}`, `/assets/images/mob-${mob.type}.png`);
+      });
     }
 
     create() {
@@ -47,6 +52,7 @@ export default function (inputGame, socket) {
       this.initLayers();
       this.initPlayer();
       this.initPlayers();
+      this.initMobs();
       this.initCamera();
       this.initKeyboard();
       this.initSocket();
@@ -111,6 +117,17 @@ export default function (inputGame, socket) {
           frameRate: 10,
           repeat: -1,
         });
+      });
+    }
+
+    initMobs() {
+      inputGame.mobs.forEach((mob) => {
+        const physicalMob = this.physics.add
+          .sprite(mob.x, mob.y, `mob-${mob.id}`)
+          .setSize(32, 32)
+          .setOffset(0, 24);
+
+        this.mobs.push(physicalMob);
       });
     }
 
