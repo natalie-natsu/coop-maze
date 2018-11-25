@@ -1,9 +1,12 @@
 import { Events } from "../events";
 
-export const MOBS_TYPE = ["B", "T", "R"];
-export const MOBS_FOR_ONE_PLAYER = { B: 100, T: 10, R: 10 };
-
 export class Mob {
+  // Mob B is the beacon (alerting others)
+  // Mob K is the one killing
+  // Mob R is the one reproducing
+  static TYPES = ["B", "K", "R"];
+  static NUMBER_FOR_ONE_PLAYER = { B: 10, K: 100, R: 10 };
+
   constructor(id, game, type, spawnPoint) {
     this.id = id;
     this.game = game;
@@ -16,17 +19,7 @@ export class Mob {
     this.vy = 0;
   }
 
-  onMove({ x, y, vx, vy }) {
-    if (!this.game || !this.game.started) {
-      return;
-    }
-
-    this.x = x;
-    this.y = y;
-
-    this.vx = vx;
-    this.vy = vy;
-
-    this.game.broadcastPosition(this, Events.UPDATE_MOB);
+  move() {
+    this.game.broadcastPosition(this, Events.UPDATE_MOB_POSITION);
   }
 }

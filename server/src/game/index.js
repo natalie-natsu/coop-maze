@@ -6,7 +6,7 @@ import { server } from "../";
 import { env } from "../env";
 import { Events } from "../events";
 import { Engine } from "../engine";
-import { Mob, MOBS_FOR_ONE_PLAYER, MOBS_TYPE } from "../mob";
+import { Mob } from "../mob";
 
 export class Game {
   constructor(user, callback) {
@@ -123,11 +123,11 @@ export class Game {
       return spawnPoint;
     };
 
-    MOBS_TYPE.forEach(type => {
+    Mob.TYPES.forEach(type => {
       const { length } = this.mobs;
       for (
         let i = length;
-        i < length + MOBS_FOR_ONE_PLAYER[type] * this.users.size;
+        i < length + Mob.NUMBER_FOR_ONE_PLAYER[type] * this.users.size;
         i += 1
       ) {
         const mob = new Mob(i, this, type, getRandomSpawnPoint());
