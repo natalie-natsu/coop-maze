@@ -1,17 +1,18 @@
 import uuidv4 from "uuid/v4";
+import isEqual from "lodash/isEqual";
 import { exec } from "child_process";
 
 import { server } from "../";
 import { env } from "../env";
 import { Events } from "../events";
 import { Engine } from "../engine";
-import { Mob, MOBS_FOR_ONE_PLAYER, MOBS_TYPE } from '../mob';
+import { Mob, MOBS_FOR_ONE_PLAYER, MOBS_TYPE } from "../mob";
 
 export class Game {
   constructor(user, callback) {
     this.id = uuidv4();
     this.users = new Map();
-    this.mobs = new Map();
+    this.mobs = [];
     this.deleteTimeoutId = null;
     this.started = false;
 
@@ -103,16 +104,18 @@ export class Game {
   }
 
   spawnMobs() {
-    const getRandomSpawnPoint = (map) => {
+    const getRandomSpawnPoint = (map = this.map) => {
       let spawnPoint;
 
       while (!spawnPoint) {
         const randomPoint = [
-          Math.floor(Math.random() * env.MAP_HEIGHT),
           Math.floor(Math.random() * env.MAP_WIDTH),
+          Math.floor(Math.random() * env.MAP_HEIGHT)
         ];
-        const alreadyTaken = [...this.mobs.values()].some(mob => [mob.x, mob.y] === randomPoint);
-        if (!alreadyTaken && map[randomPoint[0]][randomPoint[1]] === ' ') {
+        const alreadyTaken = this.mobs.some(mob =>
+          isEqual([mob.x, mob.y], randomPoint)
+        );
+        if (!alreadyTaken && map[randomPoint[1]][randomPoint[0]] === " ") {
           spawnPoint = randomPoint;
         }
       }
@@ -120,11 +123,15 @@ export class Game {
       return spawnPoint;
     };
 
-    MOBS_TYPE.map(type => {
-      let lastId = this.mobs.size > 0 ? parseInt([...this.mobs.keys()][this.mobs.size - 1], 10) + 1 : 0;
-      for (let i = lastId ; i < ( lastId + MOBS_FOR_ONE_PLAYER[type] * this.users.size); i += 1) {
-        const mob = new Mob(i, this, type, getRandomSpawnPoint(this.map));
-        this.mobs.set(i, mob);
+    MOBS_TYPE.forEach(type => {
+      const { length } = this.mobs;
+      for (
+        let i = length;
+        i < length + MOBS_FOR_ONE_PLAYER[type] * this.users.size;
+        i += 1
+      ) {
+        const mob = new Mob(i, this, type, getRandomSpawnPoint());
+        this.mobs.push(mob);
       }
     });
 
@@ -141,13 +148,13 @@ export class Game {
         x: user.x,
         y: user.y
       })),
-      mobs: Array.from(this.mobs.values()).map(mob => ({
+      mobs: this.mobs.map(mob => ({
         id: mob.id,
         type: mob.type,
         x: mob.x,
         y: mob.y,
         alerted: mob.alerted,
-        life: mob.life,
+        life: mob.life
       }))
     };
 
@@ -159,7 +166,7 @@ export class Game {
     };
   }
 
-  broadcastPosition({ id, x, y, vx, vy}, event = Events.UPDATE_POSITION) {
+  broadcastPosition({ id, x, y, vx, vy }, event = Events.UPDATE_POSITION) {
     server.io.to(this.id).emit(event, { id, x, y, vx, vy });
   }
 

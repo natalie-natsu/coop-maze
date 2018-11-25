@@ -1,7 +1,7 @@
-import { Events } from '../events';
+import { Events } from "../events";
 
-export const MOBS_TYPE = ['B', 'T', 'R'];
-export const MOBS_FOR_ONE_PLAYER = { 'B': 100, 'T': 10, 'R': 10 };
+export const MOBS_TYPE = ["B", "T", "R"];
+export const MOBS_FOR_ONE_PLAYER = { B: 100, T: 10, R: 10 };
 
 export class Mob {
   constructor(id, game, type, spawnPoint) {
