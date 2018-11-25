@@ -3,9 +3,9 @@
   "undefined": "Non défini",
   "splashLoading": "Chargement du jeu...",
   "project": {
-    "title": "A-CPU.1",
-    "name": "Alien-CPU mod.1",
-    "shortName": "AC1",
+    "title": "Cowboys vs CPU",
+    "name": "Cowboys versus CPU",
+    "shortName": "CVC",
     "credo": "Coop rogue-like fait pour le Game Off 2018"
   },
   "language": {
