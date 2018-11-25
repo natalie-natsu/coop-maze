@@ -5,11 +5,13 @@ import { server } from "../";
 import { env } from "../env";
 import { Events } from "../events";
 import { Engine } from "../engine";
+import { Mob, MOBS_FOR_ONE_PLAYER, MOBS_TYPE } from '../mob';
 
 export class Game {
   constructor(user, callback) {
     this.id = uuidv4();
     this.users = new Map();
+    this.mobs = new Map();
     this.deleteTimeoutId = null;
     this.started = false;
 
@@ -18,7 +20,7 @@ export class Game {
     const cmd = `${env.PYTHON_CMD} ${cmdPath} ${cmdOptions}`;
 
     const cmdConfig = {
-      maxBuffer: env.MAP_WIDTH * env.MAP_HEIGHT + env.MAP_HEIGHT
+      maxBuffer: env.MAP_WIDTH * env.MAP_HEIGHT + 2 * env.MAP_HEIGHT
     };
 
     exec(cmd, cmdConfig, (err, stdout) => {
@@ -91,12 +93,42 @@ export class Game {
 
     this.started = true;
 
+    this.spawnMobs();
     setTimeout(() => {
       server.io.to(this.id).emit(Events.START_GAME);
       this.log("starts");
     }, env.START_GAME_TIMEOUT * 1000);
 
     this.log(`will start in ${env.START_GAME_TIMEOUT} seconds`);
+  }
+
+  spawnMobs() {
+    const getRandomSpawnPoint = (map) => {
+      let spawnPoint;
+
+      while (!spawnPoint) {
+        const randomPoint = [
+          Math.floor(Math.random() * env.MAP_HEIGHT),
+          Math.floor(Math.random() * env.MAP_WIDTH),
+        ];
+        const alreadyTaken = [...this.mobs.values()].some(mob => [mob.x, mob.y] === randomPoint);
+        if (!alreadyTaken && map[randomPoint[0]][randomPoint[1]] === ' ') {
+          spawnPoint = randomPoint;
+        }
+      }
+
+      return spawnPoint;
+    };
+
+    MOBS_TYPE.map(type => {
+      let lastId = this.mobs.size > 0 ? parseInt([...this.mobs.keys()][this.mobs.size - 1], 10) + 1 : 0;
+      for (let i = lastId ; i < ( lastId + MOBS_FOR_ONE_PLAYER[type] * this.users.size); i += 1) {
+        const mob = new Mob(i, this, type, getRandomSpawnPoint(this.map));
+        this.mobs.set(i, mob);
+      }
+    });
+
+    this.broadcast();
   }
 
   broadcast() {
@@ -108,6 +140,14 @@ export class Game {
         ready: user.ready,
         x: user.x,
         y: user.y
+      })),
+      mobs: Array.from(this.mobs.values()).map(mob => ({
+        id: mob.id,
+        type: mob.type,
+        x: mob.x,
+        y: mob.y,
+        alerted: mob.alerted,
+        life: mob.life,
       }))
     };
 
@@ -119,14 +159,8 @@ export class Game {
     };
   }
 
-  broadcastPosition(user) {
-    server.io.to(this.id).emit(Events.UPDATE_POSITION, {
-      id: user.id,
-      x: user.x,
-      y: user.y,
-      vx: user.vx,
-      vy: user.vy
-    });
+  broadcastPosition({ id, x, y, vx, vy}, event = Events.UPDATE_POSITION) {
+    server.io.to(this.id).emit(event, { id, x, y, vx, vy });
   }
 
   delete() {
