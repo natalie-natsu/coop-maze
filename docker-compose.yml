@@ -1,0 +1,32 @@
+version: "2"
+services:
+  proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - 80:80
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+  client:
+    build: client
+    ports:
+      - 3000:3000
+    links:
+      - "server"
+    restart: always
+    environment:
+      - VIRTUAL_HOST=TODO
+  server:
+    build: server
+    ports:
+      - 3001:3001
+    restart: always
+    environment:
+      - WS_PORT=3001
+      - PYTHON_CMD="python3"
+      - MAP_WIDTH=100
+      - MAP_HEIGHT=75
+      - DELETE_GAME_TIMEOUT=10
+      - START_GAME_TIMEOUT=5
+      - MAX_MOVE_DISTANCE_ALLOWED=25
+      - TILE_SIZE=64
+
